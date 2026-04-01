@@ -110,16 +110,27 @@
 </div>
 
 <script>
+    function formatRupiah(angka) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0
+  }).format(angka);
+}
+
 const products = [
   { id: 1, name: "Baju Retro", price: 150000, image: "https://i.pinimg.com/1200x/ac/89/23/ac892342d57dc17e79012bc364c8b15b.jpg" },
   { id: 2, name: "Hoodie Gun", price: 90000, image: "https://i.pinimg.com/1200x/41/fc/3f/41fc3f5f4482ec2647a8f76f69a2078e.jpg" },
   { id: 3, name: "Hoodie Fire", price: 300000, image: "https://i.pinimg.com/736x/d4/68/d5/d468d5b5148f70a2cb0d909ba9d23d1f.jpg" },
   { id: 4, name: "Hoodie Hand God", price: 200000, image: "https://i.pinimg.com/1200x/51/4c/93/514c9375eb24ba26d52fab235f5f5b7c.jpg" },
-  { id: 5, name: "Hoodie Skull Eye", price: 200000, image: "https://i.pinimg.com/1200x/e0/e5/0d/e0e50dcde138bbc0a732579948578953.jpg" },
-  { id: 6, name: "Hooide Skull baret", price: 200000, image: "https://i.pinimg.com/736x/e1/a3/19/e1a319278f1de61e24128b644c12ca95.jpg" },
-  { id: 7, name: "Hoodie Skull Bone", price: 200000, image: "https://i.pinimg.com/736x/d8/60/8d/d8608d7104eae4a5f5c6b9abe5149526.jpg" },
-  { id: 8, name: "Hoodie Skull Sea", price: 200000, image: "https://i.pinimg.com/736x/2e/e6/f4/2ee6f4634b153641b94c6c26f27cfdd0.jpg" }
-
+  { id: 5, name: "Hoodie Skull Eye", price: 280000, image: "https://i.pinimg.com/1200x/e0/e5/0d/e0e50dcde138bbc0a732579948578953.jpg" },
+  { id: 6, name: "Hooide Skull baret", price: 560000, image: "https://i.pinimg.com/736x/e1/a3/19/e1a319278f1de61e24128b644c12ca95.jpg" },
+  { id: 7, name: "Hoodie Skull Bone", price: 900000, image: "https://i.pinimg.com/736x/d8/60/8d/d8608d7104eae4a5f5c6b9abe5149526.jpg" },
+  { id: 8, name: "Hoodie Skull Sea", price: 300000, image: "https://i.pinimg.com/736x/2e/e6/f4/2ee6f4634b153641b94c6c26f27cfdd0.jpg" },
+  { id: 9, name: "Hoodie Abstract", price: 450000, image: "https://i.pinimg.com/1200x/54/ff/c5/54ffc581aeb534d1c78760a73932d710.jpg" },
+  { id: 10, name: "Hoodie Cyber", price: 760000, image: "https://i.pinimg.com/736x/4b/bc/32/4bbc32f20c876dbbc63ab2eb70638b47.jpg" },
+  { id: 11, name: "Crewneck Abstarct", price: 620000, image: "https://i.pinimg.com/736x/24/22/b1/2422b11addc991ec0d80f23c5eadc0aa.jpg" },
+  { id: 12, name: "Crewneck Cyber", price: 390000, image: "https://i.pinimg.com/736x/9e/d5/5b/9ed55ba70993f9b3402496c3b80e1a64.jpg" },
 ];
 
 let cart = [];
