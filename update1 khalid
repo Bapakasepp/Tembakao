@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGROTA Store</title>
+
+<style>
+:root {
+  --primary: #111;
+  --accent: #27ae60;
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f5f5f5;
+}
+
+/* HEADER */
+header {
+  background: var(--primary);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.cart {
+  cursor: pointer;
+}
+
+/* GRID */
+.container {
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.price {
+  color: var(--accent);
+  margin: 8px 0;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #333;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 400px;
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+}
+
+/* CART ITEM */
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.qty {
+  display: flex;
+  gap: 5px;
+}
+
+.qty button {
+  width: 30px;
+  padding: 5px;
+}
+
+@media(max-width:600px){
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">AGROTA Store</div>
+  <div class="cart" onclick="openCart()">🛒 (<span id="cart-count">0</span>)</div>
+</header>
+
+<div class="container">
+  <div class="grid" id="product-list"></div>
+</div>
+
+<!-- CART -->
+<div class="modal" id="cart-modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeCart()">✖</span>
+    <h3>Keranjang</h3>
+    <div id="cart-items"></div>
+    <p><strong>Total: <span id="total"></span></strong></p>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+</div>
+
+<script>
+const products = [
+  { id:1, name:"Baju Retro", price:150000, image:"https://i.pinimg.com/1200x/ac/89/23/ac892342d57dc17e79012bc364c8b15b.jpg"},
+  { id:2, name:"Hoodie Gun", price:90000, image:"https://i.pinimg.com/1200x/41/fc/3f/41fc3f5f4482ec2647a8f76f69a2078e.jpg"},
+  { id:3, name:"Hoodie Fire", price:300000, image:"https://i.pinimg.com/736x/d4/68/d5/d468d5b5148f70a2cb0d909ba9d23d1f.jpg"},
+   { id: 4, name: "Hoodie Hand God", price: 200000, image: "https://i.pinimg.com/1200x/51/4c/93/514c9375eb24ba26d52fab235f5f5b7c.jpg" },
+  { id: 5, name: "Hoodie Skull Eye", price: 280000, image: "https://i.pinimg.com/1200x/e0/e5/0d/e0e50dcde138bbc0a732579948578953.jpg" },
+  { id: 6, name: "Hooide Skull baret", price: 560000, image: "https://i.pinimg.com/736x/e1/a3/19/e1a319278f1de61e24128b644c12ca95.jpg" },
+  { id: 7, name: "Hoodie Skull Bone", price: 900000, image: "https://i.pinimg.com/736x/d8/60/8d/d8608d7104eae4a5f5c6b9abe5149526.jpg" },
+  { id: 8, name: "Hoodie Skull Sea", price: 300000, image: "https://i.pinimg.com/736x/2e/e6/f4/2ee6f4634b153641b94c6c26f27cfdd0.jpg" },
+  { id: 9, name: "Hoodie Abstract", price: 450000, image: "https://i.pinimg.com/1200x/54/ff/c5/54ffc581aeb534d1c78760a73932d710.jpg" },
+  { id: 10, name: "Hoodie Cyber", price: 760000, image: "https://i.pinimg.com/736x/4b/bc/32/4bbc32f20c876dbbc63ab2eb70638b47.jpg" },
+  { id: 11, name: "Crewneck Abstarct", price: 620000, image: "https://i.pinimg.com/736x/24/22/b1/2422b11addc991ec0d80f23c5eadc0aa.jpg" },
+  { id: 12, name: "Crewneck Cyber", price: 390000, image: "https://i.pinimg.com/736x/9e/d5/5b/9ed55ba70993f9b3402496c3b80e1a64.jpg" },
+  { id: 13, name: "Casual Pants", price: 170000, image: "https://i.pinimg.com/736x/0f/07/17/0f0717a06cd364ab52fe5a3e6b2053bf.jpg" },
+  { id: 14, name: "Manfinity Hypemode Men's Letter", price: 190000, image: "https://i.pinimg.com/736x/17/a2/f7/17a2f7c19c5d5708901d012483b1ca68.jpg" },
+  { id: 15, name: "Japanese Art Frog Print Cozy Cotton Linen Pants", price: 430000, image: "https://img.fantaskycdn.com/6ed9951c46f05bdfa116437d2bf6519d_2056x.jpeg" },
+  { id: 16, name: "Letter Print Y2K Elastic", price: 800000, image: "https://princessace.com/cdn/shop/files/letter-print-y2k-elastic-waist-straight-pants-red-s-675.webp?v=1761115514&width=713" },
+  { id: 17, name: "Cap NY Black Original", price: 700000, image: "https://i.pinimg.com/736x/0a/43/de/0a43dea150525e2c31e686e89d08982e.jpg" },
+  { id: 18, name: "Cap NY Blue Original", price: 700000, image: "https://i.pinimg.com/736x/6a/61/ea/6a61eaf118a85b5566566b2023e15dfa.jpg6" }
+
+
+];
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+/* FORMAT */
+const rupiah = n => new Intl.NumberFormat("id-ID", {
+  style:"currency",
+  currency:"IDR",
+  minimumFractionDigits:0
+}).format(n);
+
+/* RENDER */
+function renderProducts(){
+  const el = document.getElementById("product-list");
+  el.innerHTML = products.map(p=>`
+    <div class="card">
+      <img src="${p.image}">
+      <div class="card-body">
+        <div class="title">${p.name}</div>
+        <div class="price">${rupiah(p.price)}</div>
+        <button onclick="addToCart(${p.id})">Tambah</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* CART LOGIC */
+function addToCart(id){
+  const item = cart.find(i=>i.id===id);
+  if(item){
+    item.qty++;
+  } else {
+    const product = products.find(p=>p.id===id);
+    cart.push({...product, qty:1});
+  }
+  saveCart();
+}
+
+function changeQty(id, delta){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0){
+    cart = cart.filter(i=>i.id!==id);
+  }
+  saveCart();
+}
+
+function saveCart(){
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+function renderCart(){
+  const el = document.getElementById("cart-items");
+  let total = 0;
+
+  el.innerHTML = cart.map(item=>{
+    total += item.price * item.qty;
+    return `
+      <div class="cart-item">
+        <div>
+          ${item.name}<br>
+          ${rupiah(item.price)}
+        </div>
+        <div class="qty">
+          <button onclick="changeQty(${item.id}, -1)">-</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${item.id}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("total").innerText = rupiah(total);
+  document.getElementById("cart-count").innerText = cart.reduce((a,b)=>a+b.qty,0);
+}
+
+/* UI */
+function openCart(){
+  document.getElementById("cart-modal").style.display="flex";
+}
+
+function closeCart(){
+  document.getElementById("cart-modal").style.display="none";
+}
+
+function checkout(){
+  alert("Pesanan berhasil 🎉");
+  cart = [];
+  saveCart();
+  closeCart();
+}
+
+/* INIT */
+renderProducts();
+renderCart();
+</script>
+
+</body>
+</html>
